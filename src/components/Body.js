@@ -14,16 +14,14 @@ const Body = () => {
 
   const fetchData = async () => {
     const data = await fetch(
-      "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9351929&lng=77.62448069999999&page_type=DESKTOP_WEB_LISTING"
+      "https://cors-anywhere.herokuapp.com/https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9351929&lng=77.62448069999999&page_type=DESKTOP_WEB_LISTING",
+      
     );
 
     const json = await data.json();
 
-    console.log(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
 
-    setListOfRestaurants(
-      json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-    );
+    setListOfRestaurants(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
     setFilteredRestaurantsListSearch(json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
   };
 
@@ -41,9 +39,9 @@ const Body = () => {
           <button onClick={
             () => {
               const searchWithFilter= listOfRestaurants.filter(res => {
-                return res.info.name.toLowerCase().includes(searchText.toLocaleLowerCase());
+                return res.info.name.toLowerCase().includes(searchText.toLowerCase());
               })
-              setFilteredRestaurantsListSearch(searchWithFilter)
+             setFilteredRestaurantsListSearch(searchWithFilter)
             }
           }
           >Search</button>
@@ -57,7 +55,7 @@ const Body = () => {
                 return restaurants.info.avgRating > 4.2;
               }
             );
-            setListOfRestaurants(filteredRestaurantsList);
+            setFilteredRestaurantsListSearch(filteredRestaurantsList);
           }}
         >
           Top Rated Restaurants
