@@ -1,6 +1,8 @@
 import RestaurantCard from "./RestaurantCard";
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"
 import Shimmer from "./Shimmer";
+
 
 const Body = () => {
   const [listOfRestaurants, setListOfRestaurants] = useState([]);
@@ -14,7 +16,7 @@ const Body = () => {
 
   const fetchData = async () => {
     const data = await fetch(
-      "https://cors-anywhere.herokuapp.com/https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9351929&lng=77.62448069999999&page_type=DESKTOP_WEB_LISTING",
+      "https://thingproxy.freeboard.io/fetch/https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9351929&lng=77.62448069999999&page_type=DESKTOP_WEB_LISTING",
       
     );
 
@@ -64,7 +66,7 @@ const Body = () => {
       <div className="res-container">
         {filteredRestaurantsListSearch.map((ele) => {
           return (
-            <RestaurantCard resData={ele} key={ele.info.id}></RestaurantCard>
+            <Link to={"/restaurants/"+ele.info.id} key={ele.info.id} className="link"><RestaurantCard resData={ele} ></RestaurantCard></Link>
           );
         })}
       </div>
