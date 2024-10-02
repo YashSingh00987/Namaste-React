@@ -1,24 +1,16 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import Shimmer from "./Shimmer";
 import { useParams } from "react-router-dom";
-import { CDN_MENU } from "../utils/constants";
+import useRestaurantMenu from "../utils/useRestaurantMenu";
+import RestaurantCategory from "./RestaurantCategory";
+import { useState } from "react"; 
 
 const RestaurantMenu = () => {
-  const [resInfo, setResInfo] = useState(null);
-
   const { resId } = useParams();
 
-  useEffect(() => {
-    fetchMenu();
-  }, []);
+  const resInfo = useRestaurantMenu(resId);
 
-  const fetchMenu = async () => {
-    const data = await fetch(CDN_MENU+resId);
-    const json = await data.json();
-
-    setResInfo(json.data);
-  };
+  const[showIndex, setShowIndex] = useState(null);
 
   if (resInfo === null) {
     return <Shimmer />;
@@ -29,19 +21,37 @@ const RestaurantMenu = () => {
   const menu =
     resInfo?.cards[4]?.groupedCard.cardGroupMap.REGULAR.cards[2]?.card?.card
       ?.itemCards;
-  
+
+  const categories =
+    resInfo?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards;
+
+  const allCategories = categories.filter((c) => {
+    return c.card?.card?.["@type"].includes("ItemCategory");
+  });
+
   return (
-    <div className="menu">
-      <h1>{name}</h1>
-      <p>
-        {cuisines.join(", ")} - {costForTwoMessage} 
+    <div className="text-center">
+      <h1 className="font-bold text-2xl my-6">{name}</h1>
+      <p className="font-bold">
+        {cuisines.join(", ")} - {costForTwoMessage}
       </p>
-      <h2>Menu</h2>
-      <ul>
-        {menu.map(item => (
-          <li key={item?.card?.info?.id}>{item?.card?.info?.name} - {"Rs."}{item?.card?.info?.price/100 || item?.card?.info?.defaultPrice/100 }</li>
-        ))}
-      </ul>
+      {allCategories.map((category ,index) => {
+        return (
+          <RestaurantCategory
+            key={category?.card?.card?.title}
+            data={category?.card?.card}
+            showItems={index === showIndex}
+            setShowIndex = {() => {
+              if(index == showIndex) {
+                setShowIndex(null)
+              }
+              else{
+                setShowIndex(index)
+              }
+            }}
+          />
+        );
+      })}
     </div>
   );
 };
